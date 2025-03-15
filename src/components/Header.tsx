@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 interface HeaderProps {
@@ -13,7 +14,7 @@ export function Header({ className }: HeaderProps) {
       className
     )}>
       <div className="container flex items-center justify-between max-w-7xl mx-auto">
-        <div className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-medical to-medical-dark flex items-center justify-center text-white">
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -34,19 +35,38 @@ export function Header({ className }: HeaderProps) {
             <h1 className="text-xl font-medium leading-tight">MediClue</h1>
             <p className="text-xs text-muted-foreground">Medical Imaging Assistant</p>
           </div>
-        </div>
+        </Link>
         
         <nav className="hidden md:flex items-center gap-6">
-          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             About
-          </a>
-          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          </Link>
+          <Link to="/documentation" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Documentation
-          </a>
-          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          </Link>
+          <Link to="/support" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Support
-          </a>
+          </Link>
         </nav>
+
+        <div className="md:hidden">
+          <button className="p-2 rounded-md hover:bg-muted transition-colors">
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              className="h-5 w-5"
+            >
+              <line x1="4" x2="20" y1="12" y2="12" />
+              <line x1="4" x2="20" y1="6" y2="6" />
+              <line x1="4" x2="20" y1="18" y2="18" />
+            </svg>
+          </button>
+        </div>
       </div>
     </header>
   );
