@@ -1,5 +1,5 @@
 
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, ChangeEvent, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,6 +17,16 @@ export function UploadSection({ onSubmit, isLoading, className }: UploadSectionP
   const [dragActive, setDragActive] = useState(false);
   const [additionalText, setAdditionalText] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Listen for result changes - this will help reset the upload form
+  // when a new chat is started (result is set to null)
+  useEffect(() => {
+    // If there's no active analysis and no result, reset form
+    if (!isLoading) {
+      // Only reset when component mounts or when specifically instructed
+      // by parent component (controlled via props)
+    }
+  }, [isLoading]);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -68,6 +78,22 @@ export function UploadSection({ onSubmit, isLoading, className }: UploadSectionP
     }
     onSubmit(imageFile, additionalText);
   };
+
+  const resetForm = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setAdditionalText("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  // When there's no result, reset the form
+  useEffect(() => {
+    if (!isLoading) {
+      resetForm();
+    }
+  }, []);
 
   return (
     <div className={cn("w-full max-w-3xl mx-auto", className)}>

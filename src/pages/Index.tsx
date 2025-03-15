@@ -9,7 +9,8 @@ import { analyzeImage } from "@/utils/api";
 import { HeroSection } from "@/components/HeroSection";
 import { Features } from "@/components/Features";
 import { HowToUse } from "@/components/HowToUse";
-import { Copyright, Linkedin } from "lucide-react";
+import { Copyright, Linkedin, MessageSquarePlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const [analyzing, setAnalyzing] = useState(false);
@@ -41,6 +42,17 @@ const Index = () => {
     }
   };
 
+  const handleNewChat = () => {
+    // Reset all states to start a new session
+    setResult(null);
+    toast.success("Started a new session", {
+      duration: 2000,
+    });
+    
+    // Scroll to upload section
+    document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-background to-secondary/50">
       <Header />
@@ -70,7 +82,18 @@ const Index = () => {
           )}
           
           {result && !analyzing && (
-            <ResultSection result={result} />
+            <>
+              <ResultSection result={result} />
+              <div className="flex justify-center mt-6">
+                <Button 
+                  onClick={handleNewChat}
+                  className="bg-primary hover:bg-primary/90 transition-colors"
+                >
+                  <MessageSquarePlus className="mr-2 h-5 w-5" />
+                  New Chat
+                </Button>
+              </div>
+            </>
           )}
         </div>
         
