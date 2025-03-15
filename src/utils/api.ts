@@ -1,7 +1,6 @@
-
 import { ApiResponse } from "@/types";
 
-const API_KEY = ""; // Replace with your Nebius API key or use env variable
+const API_KEY = "eyJhbGciOiJIUzI1NiIsImtpZCI6IlV6SXJWd1h0dnprLVRvdzlLZWstc0M1akptWXBvX1VaVkxUZlpnMDRlOFUiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJnb29nbGUtb2F1dGgyfDEwNzg4MjQwMTgyODIzNjM3ODczMSIsInNjb3BlIjoib3BlbmlkIG9mZmxpbmVfYWNjZXNzIiwiaXNzIjoiYXBpX2tleV9pc3N1ZXIiLCJhdWQiOlsiaHR0cHM6Ly9uZWJpdXMtaW5mZXJlbmNlLmV1LmF1dGgwLmNvbS9hcGkvdjIvIl0sImV4cCI6MTg5OTcwOTA1MiwidXVpZCI6ImIyNTY2OTM4LWI5MjEtNDExYy1iZGNlLTZjNDUyYjYyYzc1NiIsIm5hbWUiOiJtZWQyIiwiZXhwaXJlc19hdCI6IjIwMzAtMDMtMTRUMDg6NTc6MzIrMDAwMCJ9.oGw3j3_RKAkk7rp_fKywLPdKB2W6eOSzDn6fllM34Tk"; // Nebius API key
 
 export async function analyzeImage(
   imageFile: File,
@@ -45,12 +44,6 @@ Do not provide legal, financial, or non-medical advice.`;
     let userMessage = "Analyze this medical image:";
     if (additionalText) {
       userMessage += `\n\nAdditional context: ${additionalText}`;
-    }
-
-    // For demo/development purposes, if no API key is provided, return mock data
-    if (!API_KEY) {
-      console.warn("No API key provided, using mock data");
-      return getMockAnalysisResult(additionalText);
     }
 
     const response = await fetch("https://api.studio.nebius.com/v1/chat/completions", {
