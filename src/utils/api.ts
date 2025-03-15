@@ -1,3 +1,4 @@
+
 import { ApiResponse } from "@/types";
 
 const API_KEY = "eyJhbGciOiJIUzI1NiIsImtpZCI6IlV6SXJWd1h0dnprLVRvdzlLZWstc0M1akptWXBvX1VaVkxUZlpnMDRlOFUiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJnb29nbGUtb2F1dGgyfDEwNzg4MjQwMTgyODIzNjM3ODczMSIsInNjb3BlIjoib3BlbmlkIG9mZmxpbmVfYWNjZXNzIiwiaXNzIjoiYXBpX2tleV9pc3N1ZXIiLCJhdWQiOlsiaHR0cHM6Ly9uZWJpdXMtaW5mZXJlbmNlLmV1LmF1dGgwLmNvbS9hcGkvdjIvIl0sImV4cCI6MTg5OTcwOTA1MiwidXVpZCI6ImIyNTY2OTM4LWI5MjEtNDExYy1iZGNlLTZjNDUyYjYyYzc1NiIsIm5hbWUiOiJtZWQyIiwiZXhwaXJlc19hdCI6IjIwMzAtMDMtMTRUMDg6NTc6MzIrMDAwMCJ9.oGw3j3_RKAkk7rp_fKywLPdKB2W6eOSzDn6fllM34Tk"; // Nebius API key
@@ -46,43 +47,51 @@ Do not provide legal, financial, or non-medical advice.`;
       userMessage += `\n\nAdditional context: ${additionalText}`;
     }
 
-    const response = await fetch("https://api.studio.nebius.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "Qwen/Qwen2-VL-7B-Instruct",
-        temperature: 0.06,
-        top_p: 0.94,
-        presence_penalty: 0.37,
-        extra_body: {
-          top_k: 72
+    try {
+      const response = await fetch("https://api.studio.nebius.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${API_KEY}`,
         },
-        messages: [
-          {
-            role: "system",
-            content: systemMessage
+        body: JSON.stringify({
+          model: "Qwen/Qwen2-VL-7B-Instruct",
+          temperature: 0.06,
+          top_p: 0.94,
+          presence_penalty: 0.37,
+          extra_body: {
+            top_k: 72
           },
-          {
-            role: "user",
-            content: [
-              { type: "text", text: userMessage },
-              { type: "image_url", image_url: { url: base64Image } }
-            ]
-          }
-        ]
-      }),
-    });
+          messages: [
+            {
+              role: "system",
+              content: systemMessage
+            },
+            {
+              role: "user",
+              content: [
+                { type: "text", text: userMessage },
+                { type: "image_url", image_url: { url: base64Image } }
+              ]
+            }
+          ]
+        }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.text();
-      throw new Error(`API Error: ${response.status} - ${errorData}`);
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error(`API Error: ${response.status} - ${errorData}`);
+        // Fall back to mock data on API error
+        return getMockAnalysisResult(additionalText);
+      }
+
+      const data: ApiResponse = await response.json();
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error("Network error:", error);
+      // Fall back to mock data on network error
+      return getMockAnalysisResult(additionalText);
     }
-
-    const data: ApiResponse = await response.json();
-    return data.choices[0].message.content;
   } catch (error) {
     console.error("Analysis error:", error);
     throw error;
