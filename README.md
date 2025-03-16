@@ -28,7 +28,6 @@ MediClue is a full-stack web application designed to assist healthcare professio
 1. **Clone the Repository**
    ```sh
    git clone https://github.com/Lokesh1028/mediclue-helper.git
-   cd MediClue
    ```
 3. ** Setup**
    ```sh
