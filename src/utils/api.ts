@@ -47,44 +47,49 @@ Do not provide legal, financial, or non-medical advice.`;
       userMessage += `\n\nAdditional context: ${additionalText}`;
     }
 
-    const response = await fetch("https://api.studio.nebius.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "Qwen/Qwen2-VL-7B-Instruct",
-        temperature: 0.06,
-        top_p: 0.94,
-        presence_penalty: 0.37,
-        extra_body: {
-          top_k: 72
+    try {
+      const response = await fetch("https://api.studio.nebius.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${API_KEY}`,
         },
-        messages: [
-          {
-            role: "system",
-            content: systemMessage
+        body: JSON.stringify({
+          model: "Qwen/Qwen2-VL-7B-Instruct",
+          temperature: 0.06,
+          top_p: 0.94,
+          presence_penalty: 0.37,
+          extra_body: {
+            top_k: 72
           },
-          {
-            role: "user",
-            content: [
-              { type: "text", text: userMessage },
-              { type: "image_url", image_url: { url: base64Image } }
-            ]
-          }
-        ]
-      }),
-    });
+          messages: [
+            {
+              role: "system",
+              content: systemMessage
+            },
+            {
+              role: "user",
+              content: [
+                { type: "text", text: userMessage },
+                { type: "image_url", image_url: { url: base64Image } }
+              ]
+            }
+          ]
+        }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.text();
-      console.error(`API Error: ${response.status} - ${errorData}`);
-      throw new Error(`API Error: ${response.status} - ${errorData}`);
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error(`API Error: ${response.status} - ${errorData}`);
+        throw new Error(`API connection error (${response.status}). Please check your network connection and try again.`);
+      }
+
+      const data: ApiResponse = await response.json();
+      return data.choices[0].message.content;
+    } catch (error) {
+      console.error("Network error:", error);
+      throw new Error(`Network error: Unable to connect to the AI service. Please check your internet connection and try again.`);
     }
-
-    const data: ApiResponse = await response.json();
-    return data.choices[0].message.content;
   } catch (error) {
     console.error("Analysis error:", error);
     throw error;

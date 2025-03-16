@@ -7,7 +7,7 @@ interface LoadingIndicatorProps {
 }
 
 export function LoadingIndicator({ 
-  message = "Analyzing image...", 
+  message = "Analyzing image... This may take a few moments", 
   className 
 }: LoadingIndicatorProps) {
   return (
@@ -21,6 +21,9 @@ export function LoadingIndicator({
           style={{ animationDuration: '1.5s' }} />
       </div>
       <p className="text-base text-muted-foreground animate-pulse-subtle">{message}</p>
+      <p className="text-sm text-muted-foreground max-w-md text-center">
+        Connecting to AI service. Please wait while we process your image...
+      </p>
     </div>
   );
 }
