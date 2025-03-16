@@ -18,13 +18,44 @@ const Index = () => {
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
+  const [loadingMessages, setLoadingMessages] = useState<string[]>([
+    "Initializing image analysis...",
+    "Processing visual features...", 
+    "Identifying anatomical structures...",
+    "Applying medical context...",
+    "Generating detailed report..."
+  ]);
+  const [currentLoadingIndex, setCurrentLoadingIndex] = useState(0);
 
   const handleSubmit = async (imageFile: File, text: string) => {
     setAnalyzing(true);
     setError(null);
+    setCurrentLoadingIndex(0);
+    
+    // Set up interval to cycle through loading messages
+    const messageInterval = setInterval(() => {
+      setCurrentLoadingIndex((prev) => {
+        if (prev < loadingMessages.length - 1) {
+          return prev + 1;
+        }
+        return prev;
+      });
+    }, 2000); // Change message every 2 seconds
     
     try {
-      const analysisResult = await analyzeImage(imageFile, text);
+      // Add artificial delay to make it feel more realistic
+      const fetchData = async () => {
+        // Minimum delay of 5 seconds to look more realistic
+        const minDelay = new Promise(resolve => setTimeout(resolve, 5000));
+        const analysisResult = await analyzeImage(imageFile, text);
+        
+        // Wait for minimum delay to complete
+        await minDelay;
+        return analysisResult;
+      };
+      
+      const analysisResult = await fetchData();
+      clearInterval(messageInterval);
       setResult(analysisResult);
       
       // Check if result contains urgent findings
@@ -38,6 +69,7 @@ const Index = () => {
         });
       }
     } catch (error) {
+      clearInterval(messageInterval);
       console.error("Analysis error:", error);
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
       setError(errorMessage);
@@ -114,8 +146,18 @@ const Index = () => {
           )}
           
           {analyzing && (
-            <div className="my-8">
-              <LoadingIndicator />
+            <div className="my-8 animate-fade-in">
+              <LoadingIndicator 
+                message={loadingMessages[currentLoadingIndex]}
+              />
+              <div className="max-w-md mx-auto mt-6">
+                <div className="relative h-2 overflow-hidden rounded-full bg-secondary">
+                  <div 
+                    className="absolute left-0 h-full bg-primary transition-all duration-500 ease-out"
+                    style={{ width: `${(currentLoadingIndex + 1) * (100 / loadingMessages.length)}%` }}
+                  />
+                </div>
+              </div>
             </div>
           )}
           
