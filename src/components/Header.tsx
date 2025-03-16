@@ -44,9 +44,6 @@ export function Header({ className }: HeaderProps) {
           <Link to="/documentation" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Documentation
           </Link>
-          <Link to="/support" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            Support
-          </Link>
         </nav>
 
         <div className="md:hidden">

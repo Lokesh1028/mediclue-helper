@@ -33,8 +33,8 @@ export function HeroSection() {
               <div className="absolute -bottom-8 left-20 w-72 h-72 bg-medical-dark/30 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
               <div className="relative">
                 <img 
-                  src="/placeholder.svg" 
-                  alt="Medical Imaging AI" 
+                  src="/lovable-uploads/0f436c1d-d39a-48f1-89c8-317081ae7db3.png" 
+                  alt="Medical Imaging X-Ray Analysis" 
                   className="w-full h-full object-cover rounded-2xl shadow-xl shadow-muted/30 border border-border"
                 />
                 <div className="absolute -bottom-4 -right-4 bg-card p-4 rounded-lg shadow-lg border border-border">
