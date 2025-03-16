@@ -1,69 +1,62 @@
-# Welcome to your Lovable project
+# MediClue
 
-## Project info
+## 🏥 AI-Powered Medical Image Analysis
 
-**URL**: https://lovable.dev/projects/36ecc373-ace1-4d80-bd29-812a16df009a
+MediClue is a full-stack web application designed to assist healthcare professionals in analyzing **CT scans, X-rays, and MRI images** using AI. The app provides **automated insights** to help with preliminary diagnoses, making medical imaging more efficient and accessible.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🚀 Features
 
-**Use Lovable**
+✅ **AI-Powered Analysis** – Uses deep learning models to interpret medical images.
+✅ **Multi-Modality Support** – Supports **CT scans, X-rays, and MRIs**.  
+✅ **React Frontend** – Provides an intuitive and easy-to-use interface.  
+✅ **Nebius AI Integration** – Leverages Nebius models for accurate medical analysis.  
+✅ **User-Friendly Reports** – Generates structured findings for doctors to review.  
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/36ecc373-ace1-4d80-bd29-812a16df009a) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Tech Stack
 
-**Use your preferred IDE**
+- **Frontend:** React, CSS
+- **AI Models:** Nebius AI for medical image processing
+- 
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📥 Installation & Setup
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Clone the Repository**
+   ```sh
+   git clone https://github.com/your-username/MediClue.git
+   cd MediClue
+   ```
+3. ** Setup**
+   ```sh
+   npm install
+   npm start or npm run dev
+   ```
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🔮 Future Enhancements
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+🔹 **Voice-to-Text Input** – Allow users to dictate reports instead of typing.  
+🔹 **Long-Term Data Storage** – Enable storing and retrieving past scans.  
+🔹 **User Authentication** – Secure access to patient data and reports.  
+🔹 **Predictive Analysis** – Implement AI models for early disease prediction.  
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## 🤝 Contributing
 
-**Edit a file directly in GitHub**
+Want to contribute? Feel free to fork the repository and submit a pull request!
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature-branch`)
+3. Commit changes (`git commit -m 'Added a new feature'`)
+4. Push to the branch (`git push origin feature-branch`)
+5. Open a Pull Request
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/36ecc373-ace1-4d80-bd29-812a16df009a) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+**🌟 If you find this project useful, don't forget to star the repo! 🌟**
