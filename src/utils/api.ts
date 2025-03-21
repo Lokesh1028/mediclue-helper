@@ -1,5 +1,6 @@
 
 import { ApiResponse } from "@/types";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function analyzeImage(
   imageFile: File,
@@ -12,9 +13,6 @@ export async function analyzeImage(
 
     // Convert image to base64
     const base64Image = await fileToBase64(imageFile);
-    
-    // Import the Google Generative AI client
-    const { GoogleGenerativeAI } = await import("@google/generative-ai");
     
     // Initialize the API with the provided API key
     const genAI = new GoogleGenerativeAI("AIzaSyAzQBRwAjhCDMYc2r47M2fCEMDRaEO25hM");
