@@ -19,15 +19,15 @@ const Index = () => {
   const [error, setError] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
   const [loadingMessages, setLoadingMessages] = useState<string[]>([
-    "Initializing image analysis...",
-    "Processing visual features...", 
-    "Identifying anatomical structures...",
+    "Initializing analysis...",
+    "Processing your query...", 
+    "Identifying key information...",
     "Applying medical context...",
-    "Generating detailed report..."
+    "Generating detailed response..."
   ]);
   const [currentLoadingIndex, setCurrentLoadingIndex] = useState(0);
 
-  const handleSubmit = async (imageFile: File, text: string) => {
+  const handleSubmit = async (imageFile: File | null, text: string) => {
     setAnalyzing(true);
     setError(null);
     setCurrentLoadingIndex(0);

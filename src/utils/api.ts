@@ -3,17 +3,14 @@ import { ApiResponse } from "@/types";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export async function analyzeImage(
-  imageFile: File,
-  additionalText?: string
+  imageFile: File | null,
+  text: string
 ): Promise<string> {
   try {
-    if (!imageFile) {
-      throw new Error("No image file provided");
+    if (!text) {
+      throw new Error("No query text provided");
     }
 
-    // Convert image to base64
-    const base64Image = await fileToBase64(imageFile);
-    
     // Initialize the API with the provided API key
     const genAI = new GoogleGenerativeAI("AIzaSyAzQBRwAjhCDMYc2r47M2fCEMDRaEO25hM");
     
@@ -32,14 +29,11 @@ If serious or long-term, explain the potential condition, symptoms, and suggest 
 Always be empathetic, helpful, and avoid medical jargon when possible. If uncertain, suggest seeking professional medical help.`,
     });
     
-    // Extract proper base64 data (remove the data:image/jpeg;base64, prefix if present)
-    const base64Data = base64Image.split(",")[1] || base64Image;
+    // Add minimum delay to make it feel more realistic
+    const minDelay = new Promise(resolve => setTimeout(resolve, 5000));
     
-    // Prepare user message with image
-    let userMessage = "Analyze this medical image:";
-    if (additionalText) {
-      userMessage += `\n\nAdditional context: ${additionalText}`;
-    }
+    // Prepare user message
+    let userMessage = text;
     
     // Configure generation parameters
     const generationConfig = {
@@ -49,22 +43,36 @@ Always be empathetic, helpful, and avoid medical jargon when possible. If uncert
       maxOutputTokens: 8192,
     };
     
-    // Create the content parts - text and image
-    const imagePart = {
-      inlineData: {
-        data: base64Data,
-        mimeType: imageFile.type,
-      },
-    };
+    let result;
     
-    // Add minimum delay to make it feel more realistic
-    const minDelay = new Promise(resolve => setTimeout(resolve, 5000));
-    
-    // Call the API
-    const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: userMessage }, imagePart] }],
-      generationConfig,
-    });
+    // If an image is provided, include it in the request
+    if (imageFile) {
+      // Convert image to base64
+      const base64Image = await fileToBase64(imageFile);
+      
+      // Extract proper base64 data (remove the data:image/jpeg;base64, prefix if present)
+      const base64Data = base64Image.split(",")[1] || base64Image;
+      
+      // Create the content parts - text and image
+      const imagePart = {
+        inlineData: {
+          data: base64Data,
+          mimeType: imageFile.type,
+        },
+      };
+      
+      // Call the API with image
+      result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: userMessage }, imagePart] }],
+        generationConfig,
+      });
+    } else {
+      // Call the API with text only
+      result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: userMessage }] }],
+        generationConfig,
+      });
+    }
     
     // Wait for minimum delay to complete
     await minDelay;
