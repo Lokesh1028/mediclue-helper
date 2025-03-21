@@ -60,9 +60,6 @@ For a comprehensive diagnosis, it's recommended to:
 This is a fallback analysis provided due to connection issues with our AI service. For a more detailed and personalized analysis, please try again later.`
 };
 
-// Add the Google Generative AI package
-<lov-add-dependency>@google/generative-ai@latest</lov-add-dependency>
-
 export async function analyzeImage(
   imageFile: File,
   additionalText?: string
