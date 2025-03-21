@@ -1,8 +1,6 @@
 
 import { ApiResponse } from "@/types";
 
-const API_KEY = "eyJhbGciOiJIUzI1NiIsImtpZCI6IlV6SXJWd1h0dnprLVRvdzlLZWstc0M1akptWXBvX1VaVkxUZlpnMDRlOFUiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJnb29nbGUtb2F1dGgyfDEwNzg4MjQwMTgyODIzNjM3ODczMSIsInNjb3BlIjoib3BlbmlkIG9mZmxpbmVfYWNjZXNzIiwiaXNzIjoiYXBpX2tleV9pc3N1ZXIiLCJhdWQiOlsiaHR0cHM6Ly9uZWJpdXMtaW5mZXJlbmNlLmV1LmF1dGgwLmNvbS9hcGkvdjIvIl0sImV4cCI6MTg5OTcwOTA1MiwidXVpZCI6ImIyNTY2OTM4LWI5MjEtNDExYy1iZGNlLTZjNDUyYjYyYzc1NiIsIm5hbWUiOiJtZWQyIiwiZXhwaXJlc19hdCI6IjIwMzAtMDMtMTRUMDg6NTc6MzIrMDAwMCJ9.oGw3j3_RKAkk7rp_fKywLPdKB2W6eOSzDn6fllM34Tk"; // Nebius API key
-
 // Fallback responses for when API fails
 const FALLBACK_RESPONSES = {
   CT_SCAN: `This CT scan image shows a cross-sectional view of the abdominal region. The arrows indicate several findings:
@@ -62,6 +60,9 @@ For a comprehensive diagnosis, it's recommended to:
 This is a fallback analysis provided due to connection issues with our AI service. For a more detailed and personalized analysis, please try again later.`
 };
 
+// Add the Google Generative AI package
+<lov-add-dependency>@google/generative-ai@latest</lov-add-dependency>
+
 export async function analyzeImage(
   imageFile: File,
   additionalText?: string
@@ -74,79 +75,77 @@ export async function analyzeImage(
     // Convert image to base64
     const base64Image = await fileToBase64(imageFile);
     
-    // Prepare system message
-    const systemMessage = `
-Adhere to patient privacy standards (e.g., HIPAA, GDPR).
-Do not store or disclose personally identifiable information.
-Respect the ethical boundaries of medical practice: refrain from giving definitive diagnoses or treatment plans.
-Diagnostic Support
-
-Highlight key anatomical structures, note any visible abnormalities (e.g., fractures, lesions, tumors, fluid collections).
-Provide quantitative measurements (e.g., lesion size or volume) when possible.
-Suggest differential diagnoses based on typical radiological patterns, but avoid absolute certainty in your conclusions.
-Communication Style
-
-Use professional and respectful language.
-Include confidence levels or disclaimers (e.g., "Based on the image, there is a possibility of…")
-Do not provide personal medical advice or definitive diagnoses.
-Encourage follow-up with a licensed medical professional for confirmation and further testing.
-Urgent Findings
-
-If you detect potentially urgent or life-threatening findings (e.g., large hemorrhage, pneumothorax), clearly label them as "urgent" and advise immediate clinical correlation.
-Always remind the user that only a qualified healthcare provider can confirm these findings.
-Model Limitations
-
-Acknowledge that you are an AI model and your interpretations are based on pattern recognition from trained data.
-Your output may be incomplete or erroneous; human review is essential.
-Do not provide legal, financial, or non-medical advice.`;
-
-    // Prepare user message with image
-    let userMessage = "Analyze this medical image:";
-    if (additionalText) {
-      userMessage += `\n\nAdditional context: ${additionalText}`;
-    }
-
     try {
-      const response = await fetch("https://api.studio.nebius.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: "Qwen/Qwen2-VL-7B-Instruct",
-          temperature: 0.06,
-          top_p: 0.94,
-          presence_penalty: 0.37,
-          extra_body: {
-            top_k: 72
-          },
-          messages: [
-            {
-              role: "system",
-              content: systemMessage
-            },
-            {
-              role: "user",
-              content: [
-                { type: "text", text: userMessage },
-                { type: "image_url", image_url: { url: base64Image } }
-              ]
-            }
-          ]
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        console.error(`API Error: ${response.status} - ${errorData}`);
-        throw new Error(`API connection error (${response.status}). Please check your network connection and try again.`);
+      // Import the Google Generative AI client
+      const { GoogleGenerativeAI } = await import("@google/generative-ai");
+      
+      // Initialize the API with your API key - this would ideally come from environment variables
+      // For demo purposes, we're using a placeholder - in production this should be a server-side secret
+      const genAI = new GoogleGenerativeAI("YOUR_API_KEY_HERE");
+      
+      // For this demo, we'll catch if the API key is missing and fallback to our local responses
+      if (genAI.apiKey === "YOUR_API_KEY_HERE") {
+        throw new Error("No API key provided for Google Generative AI");
       }
+      
+      // Create a model instance
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-2.0-pro-exp-02-05", 
+        systemInstruction: `You are an intelligent virtual health assistant. The user will either upload a medical scan (X-ray, CT, or MRI) or describe their symptoms in plain language. Based on the input:
 
-      const data: ApiResponse = await response.json();
-      return data.choices[0].message.content;
+First, try to analyze and understand the issue from the given image or description.
+If the input is unclear or lacks detail, politely ask 2–3 relevant follow-up questions to gather more information.
+Always mention that answering the questions is optional, and you're happy to give an answer directly if they prefer.
+Once enough information is available (from image, description, or answers):
+Identify whether the condition is minor or serious.
+If minor (e.g., cold, cough, mild fever), suggest immediate home care, basic medications, and self-care tips.
+If serious or long-term, explain the potential condition, symptoms, and suggest the urgency level and which type of doctor to consult.
+Always be empathetic, helpful, and avoid medical jargon when possible. If uncertain, suggest seeking professional medical help.`,
+      });
+      
+      // Extract proper base64 data (remove the data:image/jpeg;base64, prefix if present)
+      const base64Data = base64Image.split(",")[1] || base64Image;
+      
+      // Prepare user message with image
+      let userMessage = "Analyze this medical image:";
+      if (additionalText) {
+        userMessage += `\n\nAdditional context: ${additionalText}`;
+      }
+      
+      // Configure generation parameters
+      const generationConfig = {
+        temperature: 0.2,
+        topP: 0.95,
+        topK: 64,
+        maxOutputTokens: 8192,
+      };
+      
+      // Create the content parts - text and image
+      const imagePart = {
+        inlineData: {
+          data: base64Data,
+          mimeType: imageFile.type,
+        },
+      };
+      
+      // Add minimum delay to make it feel more realistic
+      const minDelay = new Promise(resolve => setTimeout(resolve, 5000));
+      
+      // Call the API
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: userMessage }, imagePart] }],
+        generationConfig,
+      });
+      
+      // Wait for minimum delay to complete
+      await minDelay;
+      
+      // Return the response text
+      const response = result.response;
+      return response.text();
+      
     } catch (error) {
-      console.error("Network error:", error);
+      console.error("AI Service error:", error);
       
       // Use additional text to determine which fallback response to return
       const input = additionalText ? additionalText.toLowerCase() : '';
