@@ -1,12 +1,22 @@
 
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu, X } from "lucide-react";
 
 interface HeaderProps {
   className?: string;
 }
 
 export function Header({ className }: HeaderProps) {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    { to: "/about", label: "About" },
+    { to: "/documentation", label: "Documentation" }
+  ];
+
   return (
     <header className={cn(
       "w-full px-6 py-4 border-b border-border/30 backdrop-blur-sm sticky top-0 z-10",
@@ -37,32 +47,42 @@ export function Header({ className }: HeaderProps) {
           </div>
         </Link>
         
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            About
-          </Link>
-          <Link to="/documentation" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            Documentation
-          </Link>
+          {navLinks.map((link) => (
+            <Link 
+              key={link.to}
+              to={link.to} 
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
 
+        {/* Mobile Navigation */}
         <div className="md:hidden">
-          <button className="p-2 rounded-md hover:bg-muted transition-colors">
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              className="h-5 w-5"
-            >
-              <line x1="4" x2="20" y1="12" y2="12" />
-              <line x1="4" x2="20" y1="6" y2="6" />
-              <line x1="4" x2="20" y1="18" y2="18" />
-            </svg>
-          </button>
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <button className="p-2 rounded-md hover:bg-muted transition-colors" aria-label="Open menu">
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[250px] pt-12">
+              <nav className="flex flex-col gap-4 mt-8">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className="text-lg font-medium px-2 py-2 hover:bg-muted rounded-md transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </header>
